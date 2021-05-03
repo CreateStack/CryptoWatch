@@ -1,113 +1,96 @@
 import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
-import {w3cwebsocket as W3CWebSocket} from 'websocket';
+import StackNavigation from './app/navigation/StackNavigation';
 
-import API_KEY from './app/config/auth';
-import colors from './app/config/colors';
+const SOCKET_URL = 'wss://ws-feed.pro.coinbase.com';
+const ws = new WebSocket(SOCKET_URL);
 
-const client = new W3CWebSocket('ws://ws.coinapi.io/v1/');
 function App() {
-  const [data, setData] = React.useState();
+  /* const [btcData, setBtcData] = React.useState(true);
+  const [ethData, setEthData] = React.useState(true);
+
   React.useEffect(() => {
-    /*  client.onopen = () => {
-      console.log('WebSocket Client Connected');
-      client.send(
+    const interval = setInterval(() => {
+      setBtcData(d => !d);
+      setEthData(d => !d);
+    }, 60000);
+
+    return clearInterval(interval);
+  }, []);
+
+  React.useEffect(() => {
+    ws.onopen = () => {
+      ws.send(
         JSON.stringify({
-          type: 'hello',
-          apikey: API_KEY.API_Key,
-          heartbeat: false,
-          subscribe_data_type: ['ohlcv'],
-          subscribe_filter_asset_id: ['BTC', 'ETH'],
-          subscribe_filter_period_id: ['10sec'],
-          subscribe_filter_exchange_id: ['BINANCEFTS'],
+          type: 'subscribe',
+          product_ids: ['ETH-USD', 'BTC-USD'],
+          channels: [
+            {
+              name: 'ticker',
+              product_ids: ['ETH-USD', 'BTC-USD'],
+            },
+          ],
         }),
       );
-    }; */
-  }, []);
-  const [priceBTC, setPriceBTC] = React.useState();
-  const [priceETH, setPriceETH] = React.useState();
-  React.useEffect(() => {
-    if (!data) return;
-    const parsedData = JSON.parse(data);
-    switch (parsedData.symbol_id.split('_')[2]) {
-      case 'BTC':
-        setPriceBTC(parsedData.price_close);
-        break;
-      case 'ETH':
-        setPriceETH(parsedData.price_close);
-        break;
-      default:
-        break;
-    }
-  }, [data]);
+    };
 
-  fetch;
+    ws.onmessage = msg => {
+      if (!btcData && !ethData) return;
+      if (!msg) return;
+      priceData = JSON.parse(msg.data);
+      switch (priceData.product_id) {
+        case 'ETH-USD':
+          ethData && setPriceETH(priceData.price);
+          setEthData(false);
+          break;
+        case 'BTC-USD':
+          btcData && setPriceBTC(priceData.price);
+          setBtcData(false);
+          break;
+        default:
+          setBtcData(false);
+          setEthData(false);
+          break;
+      }
+    };
+    ws.onerror = e => {
+      console.log(e.message);
+    };
+    ws.onclose = e => {
+      console.log(e.code, e.reason);
+    };
+  }, []);
+  const [priceBTC, setPriceBTC] = React.useState(0);
+  const [priceETH, setPriceETH] = React.useState(0);
 
   return (
-    <View style={styles.container}>
+    <View style={{...styles.container}}>
       <View style={styles.coin}>
         <View style={styles.coinDesc}>
           <Image
             source={{
-              uri:
-                'https://s3.eu-central-1.amazonaws.com/bbxt-static-icons/type-id/png_16/f231d7382689406f9a50dde841418c64.png',
+              uri: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
             }}
             style={styles.icon}
           />
           <Text style={styles.coinText}>BTC</Text>
         </View>
-        <Text>{priceBTC}</Text>
+        <Text>$ {priceBTC}</Text>
       </View>
       <View style={styles.coin}>
         <View style={styles.coinDesc}>
           <Image
             source={{
               uri:
-                'https://s3.eu-central-1.amazonaws.com/bbxt-static-icons/type-id/png_16/04836ff3bc4d4d95820e0155594dca86.png',
+                'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
             }}
             style={styles.icon}
           />
           <Text style={styles.coinText}>ETH</Text>
         </View>
-        <Text>{priceETH}</Text>
+        <Text>$ {priceETH}</Text>
       </View>
-    </View>
-  );
+    </View> */
+  return <StackNavigation />;
 }
-
-const styles = StyleSheet.create({
-  coin: {
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 16,
-    width: '100%',
-  },
-  coinDesc: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  coinText: {
-    color: colors.black,
-    fontSize: 20,
-    lineHeight: 21,
-  },
-  container: {
-    alignItems: 'center',
-    backgroundColor: colors.greyLight,
-    flex: 1,
-    justifyContent: 'center',
-    padding: 16,
-  },
-  icon: {
-    height: 16,
-    width: 16,
-    marginRight: 10,
-  },
-});
 
 export default App;
