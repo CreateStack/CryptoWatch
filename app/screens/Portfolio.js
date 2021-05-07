@@ -15,13 +15,31 @@ import Footer from '../component/Footer';
 import InvestmentOverview from '../component/InvestmentOverview';
 import Separator from '../component/Separator';
 import colors from '../config/colors';
+import useStore from '../store/useStore';
 
 function Portfolio(props) {
+  const {
+    addCrypto,
+    deleteCrypto,
+    editCrypto,
+    getState,
+    subscribeStore,
+  } = useStore();
   const styles = createStyles('dark');
-  const data = Array(10)
-    .fill()
-    .map((v, i) => ({id: i}));
-  const leftAction = () => (
+  const [data, setData] = React.useState([]);
+  const [refresh, setRefresh] = React.useState(false);
+
+  React.useEffect(() => {
+    setRefresh(true);
+    setData(getState().crypto.cryptos);
+    setRefresh(false);
+  });
+
+  subscribeStore(async () => {
+    setData(await getState().crypto.cryptos);
+  });
+
+  const leftAction = item => (
     <TouchableOpacity
       style={{
         backgroundColor: colors['dark'].green,
@@ -33,7 +51,7 @@ function Portfolio(props) {
     </TouchableOpacity>
   );
 
-  const rightAction = () => (
+  const rightAction = item => (
     <TouchableOpacity
       style={{
         backgroundColor: colors['dark'].red,
@@ -41,18 +59,23 @@ function Portfolio(props) {
         justifyContent: 'center',
         alignItems: 'flex-end',
         paddingHorizontal: 16,
+      }}
+      onPress={() => {
+        setRefresh(true);
+        deleteCrypto(item);
+        setData([]);
       }}>
       <Text style={{fontSize: 18, color: colors['dark'].white}}>Delete</Text>
     </TouchableOpacity>
   );
-  const renderItem = item => {
-    return (
+  const renderItem = ({item, index}) => {
+    return item ? (
       <Swipeable
-        renderLeftActions={leftAction}
-        renderRightActions={rightAction}>
-        <Currency />
+        renderLeftActions={() => leftAction(item)}
+        renderRightActions={() => rightAction(item)}>
+        <Currency item={item} />
       </Swipeable>
-    );
+    ) : null;
   };
 
   return (
@@ -81,10 +104,11 @@ function Portfolio(props) {
       <FlatList
         //contentContainerStyle={styles.flatlistContainer}
         data={data}
+        ListEmptyComponent={() => null}
         keyExtractor={(item, index) => index.toString()}
-        //onRefresh={onRefresh}
-        renderItem={({item}) => renderItem(item)}
-        //refreshing={refresh && !loadingMore}
+        onRefresh={() => console.log('Refreshing')}
+        renderItem={renderItem}
+        refreshing={refresh}
         style={styles.flatlist}
         ItemSeparatorComponent={() => (
           <Separator
@@ -95,7 +119,17 @@ function Portfolio(props) {
         decelerationRate={2}
       />
       <View style={styles.footerCont}>
-        <Footer />
+        <Footer
+          addNewCurrency={(name, buyPrice, quantity, value) =>
+            addCrypto({
+              id: value,
+              name: name,
+              buyPrice: buyPrice,
+              quantity,
+              quantity,
+            })
+          }
+        />
       </View>
     </SafeAreaView>
   );

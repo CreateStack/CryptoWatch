@@ -2,14 +2,20 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import colors from '../config/colors';
 
-function Currency() {
+function Currency({item = {}}) {
   const styles = createStyles('dark');
   return (
     <View style={styles.container}>
       <View style={styles.leftDetails}>
-        <Text style={styles.leftTopBottomText}>4 Qty. • Avg. 3244.00</Text>
-        <Text style={styles.leftMiddleText}>APOLLOHOSP</Text>
-        <Text style={styles.leftTopBottomText}>Invested 12976.00</Text>
+        <Text style={styles.leftTopBottomText}>
+          {item.quantity + ' Qty.  •  Avg. ' + item.buyPrice}
+        </Text>
+        <Text style={styles.leftMiddleText}>
+          {item.name + ' (' + item.id + ')'}
+        </Text>
+        <Text style={styles.leftTopBottomText}>
+          {'Invested ' + (item.quantity * item.buyPrice).toFixed(2)}
+        </Text>
       </View>
       <View style={styles.rightDetails}>
         <Text style={styles.rightTopBottomText}>-1.14%</Text>

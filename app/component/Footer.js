@@ -11,9 +11,9 @@ import Icon from 'react-native-vector-icons/dist/AntDesign';
 import colors from '../config/colors';
 import AddCurrency from './AddCurrency';
 
-function Footer(props) {
+function Footer({addNewCurrency = () => {}}) {
   const styles = createStyles('dark');
-  const [addCurrencyVisible, setAddCurrencyVisible] = React.useState(true);
+  const [addCurrencyVisible, setAddCurrencyVisible] = React.useState(false);
   return (
     <>
       <View style={styles.container}>
@@ -29,8 +29,9 @@ function Footer(props) {
         </View>
       </View>
       <AddCurrency
-        visible={addCurrencyVisible}
+        onAddPress={addNewCurrency}
         setVisible={setAddCurrencyVisible}
+        visible={addCurrencyVisible}
       />
     </>
   );

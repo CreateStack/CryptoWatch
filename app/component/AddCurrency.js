@@ -12,17 +12,10 @@ function AddCurrency({onAddPress = () => {}, setVisible, visible}) {
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
-  const [items, setItems] = useState(constants.slice(0, 10));
+  const [items, setItems] = useState(constants);
   const [buyPrice, setBuyPrice] = useState('');
   const [quantity, setQuanity] = useState('');
   const [isAddDisabled, setIsAddDisabled] = useState(true);
-
-  console.log(
-    'Length: ',
-    constants.filter(
-      coin => coin.type_is_crypto == 0 || coin.volume_1day_usd == 0,
-    ).length,
-  );
 
   React.useEffect(() => {
     if (
@@ -74,7 +67,7 @@ function AddCurrency({onAddPress = () => {}, setVisible, visible}) {
           <FloatingInput
             label="Quantity"
             value={quantity}
-            onChangeText={quan => setQuanity(quan.replace(/[^0-9]/g, ''))}
+            onChangeText={quan => setQuanity(quan.replace(/[^0-9.]/g, ''))}
             keyboardType="numeric"
           />
         </View>
@@ -83,7 +76,14 @@ function AddCurrency({onAddPress = () => {}, setVisible, visible}) {
             style={styles.addButton}
             disabled={isAddDisabled}
             onPress={() => {
-              onAddPress(value, buyPrice, quantity);
+              let name = value;
+              for (let i = 0; i < constants.length; i++) {
+                if (constants[i].asset_id === value) {
+                  name = constants[i].name;
+                  break;
+                }
+              }
+              onAddPress(name, buyPrice, quantity, value);
               setBuyPrice('');
               setQuanity('');
               setValue('');

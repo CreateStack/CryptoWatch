@@ -1,8 +1,13 @@
 import React from 'react';
 import StackNavigation from './app/navigation/StackNavigation';
 
+import configureStore from './app/store/configureStore';
+import StoreContext from './app/store/context';
+
 const SOCKET_URL = 'wss://ws-feed.pro.coinbase.com';
 const ws = new WebSocket(SOCKET_URL);
+
+const store = configureStore();
 
 function App() {
   /* const [btcData, setBtcData] = React.useState(true);
@@ -90,7 +95,11 @@ function App() {
         <Text>$ {priceETH}</Text>
       </View>
     </View> */
-  return <StackNavigation />;
+  return (
+    <StoreContext.Provider value={{store}}>
+      <StackNavigation />
+    </StoreContext.Provider>
+  );
 }
 
 export default App;
