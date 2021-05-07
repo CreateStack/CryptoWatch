@@ -11,8 +11,8 @@ import Icon from 'react-native-vector-icons/dist/AntDesign';
 import colors from '../config/colors';
 import AddCurrency from './AddCurrency';
 
-function Footer({addNewCurrency = () => {}}) {
-  const styles = createStyles('dark');
+function Footer({addNewCurrency = () => {}, theme}) {
+  const styles = createStyles(theme);
   const [addCurrencyVisible, setAddCurrencyVisible] = React.useState(false);
   return (
     <>
@@ -21,7 +21,7 @@ function Footer({addNewCurrency = () => {}}) {
         <TouchableOpacity
           style={styles.addContainer}
           onPress={() => setAddCurrencyVisible(visible => !visible)}>
-          <Icon name="pluscircleo" size={40} color={colors['dark'].blue} />
+          <Icon name="pluscircleo" size={40} color={colors[theme].blue} />
         </TouchableOpacity>
         <View style={styles.figures}>
           <Text style={styles.number}>-1,209.79 </Text>
@@ -32,6 +32,7 @@ function Footer({addNewCurrency = () => {}}) {
         onAddPress={addNewCurrency}
         setVisible={setAddCurrencyVisible}
         visible={addCurrencyVisible}
+        theme={theme}
       />
     </>
   );
@@ -47,6 +48,7 @@ const createStyles = theme =>
       borderWidth: 8,
       borderRadius: 100,
       borderColor: colors[theme].secondary,
+      elevation: 3,
     },
     container: {
       backgroundColor: colors[theme].secondary,
@@ -56,6 +58,7 @@ const createStyles = theme =>
       justifyContent: 'space-between',
       alignItems: 'center',
       width: Dimensions.get('window').width,
+      elevation: 10,
     },
     figures: {
       flexDirection: 'row',

@@ -11,14 +11,18 @@ export default class FloatingLabelInput extends React.Component {
   handleBlur = () => this.setState({isFocused: false});
 
   render() {
-    const {label, ...props} = this.props;
+    const {label, theme, ...props} = this.props;
     const {isFocused} = this.state;
     const labelStyle = {
       position: 'absolute',
       left: 0,
       top: !isFocused ? 10 : 0,
       fontSize: !isFocused ? 16 : 12,
-      color: !isFocused ? colors['dark'].white : colors['dark'].blue,
+      color: !isFocused
+        ? colors[theme].white
+        : this.props.buy
+        ? colors[theme].blue
+        : colors[theme].red,
     };
     return (
       <View style={{paddingTop: 18}}>
@@ -27,7 +31,7 @@ export default class FloatingLabelInput extends React.Component {
           {...props}
           style={{
             fontSize: 18,
-            color: colors['dark'].white,
+            color: colors[theme].white,
             borderBottomWidth: 1,
             borderBottomColor: '#555',
           }}

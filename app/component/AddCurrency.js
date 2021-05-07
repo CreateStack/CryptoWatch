@@ -7,8 +7,8 @@ import FloatingInput from './FloatingInput';
 import colors from '../config/colors';
 import constants from '../config/constants';
 
-function AddCurrency({onAddPress = () => {}, setVisible, visible}) {
-  const styles = createStyles('dark');
+function AddCurrency({onAddPress = () => {}, setVisible, theme, visible}) {
+  const styles = createStyles(theme);
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
@@ -27,6 +27,7 @@ function AddCurrency({onAddPress = () => {}, setVisible, visible}) {
       value != ''
     )
       setIsAddDisabled(false);
+    else setIsAddDisabled(true);
   }, [value, buyPrice, quantity]);
   return (
     <Modal
@@ -59,21 +60,30 @@ function AddCurrency({onAddPress = () => {}, setVisible, visible}) {
         </View>
         <View style={styles.inputCont}>
           <FloatingInput
+            buy={true}
             label="Buy price"
             value={buyPrice}
             onChangeText={bp => setBuyPrice(bp.replace(/[^0-9.]/g, ''))}
             keyboardType="numeric"
+            theme={theme}
           />
           <FloatingInput
+            buy={true}
             label="Quantity"
             value={quantity}
             onChangeText={quan => setQuanity(quan.replace(/[^0-9.]/g, ''))}
             keyboardType="numeric"
+            theme={theme}
           />
         </View>
         <View style={styles.buttonsCont}>
           <TouchableOpacity
-            style={styles.addButton}
+            style={{
+              ...styles.addButton,
+              backgroundColor: isAddDisabled
+                ? colors[theme].primary
+                : colors[theme].green,
+            }}
             disabled={isAddDisabled}
             onPress={() => {
               let name = value;

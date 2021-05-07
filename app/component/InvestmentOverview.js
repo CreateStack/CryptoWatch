@@ -4,21 +4,21 @@ import {StyleSheet, Text, View} from 'react-native';
 import colors from '../config/colors';
 import Separator from './Separator';
 
-function InvestmentOverview() {
-  const styles = createStyles('dark');
+function InvestmentOverview({invested, current, pl, plPercent, theme}) {
+  const styles = createStyles(theme);
   return (
     <View style={styles.container}>
       <View style={styles.overview}>
         <View style={styles.invested}>
           <Text style={styles.upperText}>Invested</Text>
-          <Text style={styles.lowerText}>1,59,607.67</Text>
+          <Text style={styles.lowerText}>{invested}</Text>
         </View>
         <View style={styles.current}>
           <Text style={styles.upperText}>Current</Text>
           <Text style={styles.lowerText}>1,73,711.17</Text>
         </View>
       </View>
-      <Separator style={styles.separator} dashColor={colors['dark'].grey} />
+      <Separator style={styles.separator} dashColor={colors[theme].grey} />
       <View style={styles.overview}>
         <View style={styles.invested}>
           <Text style={styles.PLText}>P&L</Text>
@@ -39,6 +39,7 @@ const createStyles = theme =>
       padding: 16,
       width: '100%',
       borderRadius: 5,
+      elevation: 5,
     },
     overview: {
       flexDirection: 'row',

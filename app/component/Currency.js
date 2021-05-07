@@ -2,8 +2,8 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import colors from '../config/colors';
 
-function Currency({item = {}}) {
-  const styles = createStyles('dark');
+function Currency({item = {}, theme}) {
+  const styles = createStyles(theme);
   return (
     <View style={styles.container}>
       <View style={styles.leftDetails}>

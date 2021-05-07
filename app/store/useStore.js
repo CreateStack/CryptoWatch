@@ -35,5 +35,18 @@ export default useStore = () => {
     }
   };
 
-  return {addCrypto, deleteCrypto, editCrypto, getState, subscribeStore};
+  const changeTheme = (theme = null) => {
+    if (theme !== null) {
+      store.dispatch(actions.changeTheme({theme}));
+    }
+  };
+
+  return {
+    addCrypto,
+    changeTheme,
+    deleteCrypto,
+    editCrypto,
+    getState,
+    subscribeStore,
+  };
 };

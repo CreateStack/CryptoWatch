@@ -3,15 +3,30 @@ import {StyleSheet, Switch, Text, View} from 'react-native';
 import Separator from '../component/Separator';
 
 import colors from '../config/colors';
+import useStore from '../store/useStore';
 
 function Settings(props) {
-  const styles = createStyles('dark');
-  const [isEnabled, setIsEnabled] = React.useState(true);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const {getState, changeTheme, subscribeStore} = useStore();
+  const [darkMode, setDarkMode] = React.useState(getState().crypto.darkMode);
+  const theme = darkMode ? 'dark' : 'light';
+  const styles = createStyles(darkMode ? 'dark' : 'light');
+  let unSubscribe = subscribeStore(async () => {
+    setDarkMode(await getState().crypto.darkMode);
+  });
+  const [isEnabled, setIsEnabled] = React.useState(darkMode);
+  React.useEffect(() => {
+    return () => unSubscribe();
+  }, []);
+  const toggleSwitch = () => {
+    setIsEnabled(previousState => {
+      changeTheme(!previousState);
+      return !previousState;
+    });
+  };
   return (
     <View style={styles.container}>
       <Separator
-        dashColor={colors['dark'].grey}
+        dashColor={colors[theme].grey}
         dashStyle={{height: 0.5}}
         style={{width: '100%'}}
       />
@@ -19,17 +34,17 @@ function Settings(props) {
         <Text style={styles.darkModeText}>Dark mode</Text>
         <Switch
           trackColor={{
-            false: colors['dark'].grey,
-            true: colors['dark'].blue,
+            false: colors[theme].grey,
+            true: colors[theme].blue,
           }}
           thumbColor={isEnabled ? '#fff' : '#fff'}
-          ios_backgroundColor={colors['dark'].primary}
+          ios_backgroundColor={colors[theme].primary}
           onValueChange={toggleSwitch}
           value={isEnabled}
         />
       </View>
       <Separator
-        dashColor={colors['dark'].grey}
+        dashColor={colors[theme].grey}
         dashStyle={{height: 0.5}}
         style={{width: '100%'}}
       />
