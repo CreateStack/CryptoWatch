@@ -17,7 +17,7 @@ const cryptoSlice = createSlice({
       state.investment = Number(
         Number(state.investment) +
           action.payload.crypto.buyPrice * action.payload.crypto.quantity,
-      ).toFixed(2);
+      );
     },
     deleteCrypto: (state, action) => {
       state.cryptos = state.cryptos.filter(
@@ -26,7 +26,8 @@ const cryptoSlice = createSlice({
       state.investment = Number(
         Number(state.investment) -
           action.payload.crypto.buyPrice * action.payload.crypto.quantity,
-      ).toFixed(2);
+      );
+      if (state.cryptos.length === 0) state.investment = 0;
     },
     editCrypto: (state, action) => {
       let item = action.payload.crypto;
@@ -43,7 +44,7 @@ const cryptoSlice = createSlice({
             );
             state.investment = Number(
               Number(state.investment) - oldData.buyPrice * oldData.quantity,
-            ).toFixed(2);
+            );
             break;
           }
           let newBuyPrice = item.buy
@@ -53,13 +54,13 @@ const cryptoSlice = createSlice({
             : (Number(oldData.buyPrice * oldData.quantity) -
                 Number(item.price * item.quantity)) /
               newQuantity;
-          state.cryptos[i].buyPrice = newBuyPrice.toFixed(2);
+          state.cryptos[i].buyPrice = newBuyPrice;
           state.cryptos[i].quantity = newQuantity;
           let newInvestment = 0;
           newInvestment = item.buy
             ? Number(state.investment) + item.price * item.quantity
             : Number(state.investment) - oldData.buyPrice * item.quantity;
-          state.investment = Number(newInvestment).toFixed(2);
+          state.investment = Number(newInvestment);
           break;
         }
       }
@@ -67,11 +68,15 @@ const cryptoSlice = createSlice({
     changeTheme: (state, action) => {
       state.darkMode = action.payload.theme;
     },
+    changeCurrency: (state, action) => {
+      state.currency = action.payload.currency;
+    },
   },
 });
 
 export const {
   addCrypto,
+  changeCurrency,
   changeTheme,
   deleteCrypto,
   editCrypto,

@@ -1,4 +1,6 @@
-import {API_KEY, BASE_URL} from '../../websocket/constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {BASE_URL} from '../../websocket/constants';
 import * as socketActions from '../socket';
 
 let socket = null;
@@ -18,7 +20,7 @@ function waitForSocketConnection(socket, callback) {
     } else {
       waitForSocketConnection(socket, callback);
     }
-  }, 5000);
+  }, 2000);
 }
 
 const socketMiddleware = store => next => action => {
@@ -50,6 +52,22 @@ const socketMiddleware = store => next => action => {
           );
         }
         break;
+      case '401':
+        store.dispatch(
+          socketActions.displayMessage({
+            message:
+              'API Key invalid or not preset. Please generate a new one from settings.',
+            showMessage: true,
+          }),
+        );
+        setTimeout(() => {
+          store.dispatch(
+            socketActions.displayMessage({
+              message: '',
+              showMessage: false,
+            }),
+          );
+        }, 10000);
       default:
         break;
     }
@@ -58,20 +76,20 @@ const socketMiddleware = store => next => action => {
   switch (action.type) {
     case 'socket/connectWs':
       if (socket !== null) socket.close();
-      socket = new WebSocket(BASE_URL + '?api_key=' + API_KEY);
-      socket.onmessage = onMessage(store);
+      AsyncStorage.getItem('apiKey').then(v => {
+        socket = new WebSocket(BASE_URL + '?api_key=' + v);
+        socket.onmessage = onMessage(store);
 
-      store.getState().socket.subs.forEach(sub => {
-        console.log('Add ', createPayload(sub, true));
-        console.log('close ', createPayload(sub, true, 24));
-        waitForSocketConnection(socket, () =>
-          socket.send(JSON.stringify(createPayload(sub, true))),
-        );
-        waitForSocketConnection(socket, () =>
-          socket.send(JSON.stringify(createPayload(sub, true, 24))),
-        );
+        store.getState().socket.subs.forEach(sub => {
+          waitForSocketConnection(socket, () =>
+            socket.send(JSON.stringify(createPayload(sub, true))),
+          );
+          waitForSocketConnection(socket, () =>
+            socket.send(JSON.stringify(createPayload(sub, true, 24))),
+          );
+        });
+        next(action);
       });
-      next(action);
       break;
     case 'socket/disconnectWs':
       try {
@@ -83,9 +101,14 @@ const socketMiddleware = store => next => action => {
       next(action);
       break;
     case 'socket/addSub':
-      waitForSocketConnection(socket, () =>
-        socket.send(JSON.stringify(createPayload(action.payload.newSub, true))),
-      );
+      waitForSocketConnection(socket, () => {
+        socket.send(JSON.stringify(createPayload(action.payload.newSub, true)));
+        setTimeout(() => {
+          socket.send(
+            JSON.stringify(createPayload(action.payload.newSub, true, 24)),
+          );
+        }, 3000);
+      });
       next(action);
       break;
     case 'socket/removeSub':

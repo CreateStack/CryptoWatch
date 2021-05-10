@@ -7,7 +7,14 @@ import FloatingInput from './FloatingInput';
 import colors from '../config/colors';
 import constants from '../config/constants';
 
-function AddCurrency({onAddPress = () => {}, setVisible, theme, visible}) {
+function AddCurrency({
+  onAddPress = () => {},
+  setVisible,
+  theme,
+  visible,
+  usdInr,
+  currency,
+}) {
   const styles = createStyles(theme);
 
   const [open, setOpen] = useState(false);
@@ -93,7 +100,12 @@ function AddCurrency({onAddPress = () => {}, setVisible, theme, visible}) {
                   break;
                 }
               }
-              onAddPress(name, buyPrice, quantity, value);
+              onAddPress(
+                name,
+                currency === 'INR' ? buyPrice / usdInr : buyPrice,
+                quantity,
+                value,
+              );
               setBuyPrice('');
               setQuanity('');
               setValue('');

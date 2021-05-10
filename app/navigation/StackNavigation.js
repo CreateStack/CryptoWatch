@@ -10,6 +10,7 @@ import Portfolio from '../screens/Portfolio';
 import Settings from '../screens/Settings';
 import EditCurrency from '../component/EditCurrency';
 import useStore from '../store/useStore';
+import ApiKeyGeneration from '../screens/ApiKeyGeneration';
 
 const Stack = createStackNavigator();
 
@@ -40,9 +41,11 @@ function StackNavigation(props) {
 
   const {connectWs, disconnectWs, getState, subscribeStore} = useStore();
   const [darkMode, setDarkMode] = React.useState(getState().crypto.darkMode);
+  const [currency, setCurrency] = React.useState(getState().crypto.currency);
   const theme = darkMode ? 'dark' : 'light';
   let unSubscribe = subscribeStore(async () => {
     setDarkMode(await getState().crypto.darkMode);
+    setCurrency(await getState().crypto.currency);
   });
   React.useEffect(() => {
     if (appStateVisible === 'active') connectWs();
@@ -80,8 +83,9 @@ function StackNavigation(props) {
                 style={{padding: 16}}
               />
             ),
-            title: 'Crypto portfolio',
+            title: 'Crypto portfolio (' + (currency === 'USD' ? '$)' : '₹)'),
           })}
+          initialParams={{usdInr: props.usdInr}}
         />
         <Stack.Screen
           name="Settings"
@@ -104,6 +108,26 @@ function StackNavigation(props) {
           name="EditCurrency"
           component={EditCurrency}
           options={{
+            title: 'Edit currency',
+            headerTitleStyle: {
+              color: colors[theme].white,
+              fontSize: 22,
+              marginLeft: -20,
+              elevation: 0,
+              shadowOpacity: 0,
+            },
+            headerStyle: {
+              backgroundColor: colors[theme].primary,
+              elevation: 0,
+              shadowOpacity: 0,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="ApiKeyGeneration"
+          component={ApiKeyGeneration}
+          options={{
+            title: 'API Key',
             headerTitleStyle: {
               color: colors[theme].white,
               fontSize: 22,

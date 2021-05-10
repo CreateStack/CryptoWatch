@@ -2,9 +2,16 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 import colors from '../config/colors';
+import getPrice from '../util/getPrice';
 import Separator from './Separator';
 
-function InvestmentOverview({invested = 0, current = 0, pl, plPercent, theme}) {
+function InvestmentOverview({
+  invested = 0,
+  current = 0,
+  theme,
+  usdInr,
+  currency,
+}) {
   const styles = createStyles(theme);
   const pnl = current - invested;
   let profitPer = 0;
@@ -14,11 +21,15 @@ function InvestmentOverview({invested = 0, current = 0, pl, plPercent, theme}) {
       <View style={styles.overview}>
         <View style={styles.invested}>
           <Text style={styles.upperText}>Invested</Text>
-          <Text style={styles.lowerText}>{Number(invested).toFixed(2)}</Text>
+          <Text style={styles.lowerText}>
+            {getPrice(invested, usdInr, currency, 2)}
+          </Text>
         </View>
         <View style={styles.current}>
           <Text style={styles.upperText}>Current</Text>
-          <Text style={styles.lowerText}>{Number(current).toFixed(2)}</Text>
+          <Text style={styles.lowerText}>
+            {getPrice(current, usdInr, currency, 2)}
+          </Text>
         </View>
       </View>
       <Separator style={styles.separator} dashColor={colors[theme].grey} />
@@ -32,7 +43,7 @@ function InvestmentOverview({invested = 0, current = 0, pl, plPercent, theme}) {
               ...styles.PL,
               color: pnl >= 0 ? colors[theme].green : colors[theme].red,
             }}>
-            {(pnl >= 0 ? '+' : '') + Number(pnl).toFixed(2)}{' '}
+            {(pnl >= 0 ? '+' : '') + getPrice(pnl, usdInr, currency, 2)}{' '}
           </Text>
           <Text
             style={{

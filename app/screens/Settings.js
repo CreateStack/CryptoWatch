@@ -1,15 +1,15 @@
 import React from 'react';
-import {StyleSheet, Switch, Text, View} from 'react-native';
-import Separator from '../component/Separator';
+import {StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
 
 import colors from '../config/colors';
+import Separator from '../component/Separator';
 import useStore from '../store/useStore';
 
 function Settings(props) {
-  const {getState, changeTheme, subscribeStore} = useStore();
+  const {getState, changeTheme, subscribeStore, changeCurrency} = useStore();
   const [darkMode, setDarkMode] = React.useState(getState().crypto.darkMode);
   const theme = darkMode ? 'dark' : 'light';
-  const styles = createStyles(darkMode ? 'dark' : 'light');
+  const styles = createStyles(theme);
   let unSubscribe = subscribeStore(async () => {
     setDarkMode(await getState().crypto.darkMode);
   });
@@ -23,6 +23,9 @@ function Settings(props) {
       return !previousState;
     });
   };
+  const [baseCurrency, setBaseCurrency] = React.useState(
+    getState().crypto.currency,
+  );
   return (
     <View style={styles.container}>
       <Separator
@@ -48,16 +51,64 @@ function Settings(props) {
         dashStyle={{height: 0.5}}
         style={{width: '100%'}}
       />
+      <View style={styles.darkModeContainer}>
+        <Text style={styles.darkModeText}>Base currency</Text>
+        <TouchableOpacity
+          onPress={() =>
+            setBaseCurrency(v => {
+              if (v === 'INR') {
+                changeCurrency('USD');
+                return 'USD';
+              }
+              changeCurrency('INR');
+              return 'INR';
+            })
+          }
+          style={styles.currencySelector}>
+          <Text style={styles.currencyText}>{baseCurrency}</Text>
+        </TouchableOpacity>
+      </View>
+      <Separator
+        dashColor={colors[theme].grey}
+        dashStyle={{height: 0.5}}
+        style={{width: '100%'}}
+      />
+      <View style={styles.darkModeContainer}>
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate('ApiKeyGeneration')}
+          style={styles.apiKey}>
+          <Text style={styles.darkModeText}>API Key</Text>
+        </TouchableOpacity>
+      </View>
+      <Separator
+        dashColor={colors[theme].grey}
+        dashStyle={{height: 0.5}}
+        style={{width: '100%'}}
+      />
     </View>
   );
 }
 
 const createStyles = theme =>
   StyleSheet.create({
+    apiKey: {
+      width: '100%',
+    },
     container: {
       backgroundColor: colors[theme].primary,
       flex: 1,
       width: '100%',
+    },
+    currencySelector: {
+      backgroundColor: colors[theme].blue,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 6,
+    },
+    currencyText: {
+      color: colors[theme].white,
+      fontWeight: 'bold',
+      fontSize: 14,
     },
     darkModeContainer: {
       flexDirection: 'row',

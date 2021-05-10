@@ -1,8 +1,10 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import colors from '../config/colors';
 
-function Currency({item = {}, theme, ticker = {}}) {
+import colors from '../config/colors';
+import getPrice from '../util/getPrice';
+
+function Currency({item = {}, theme, ticker = {}, usdInr, currency}) {
   const styles = createStyles(theme);
   let percent = 0;
   let profit = 0;
@@ -18,13 +20,16 @@ function Currency({item = {}, theme, ticker = {}}) {
     <View style={styles.container}>
       <View style={styles.leftDetails}>
         <Text style={styles.leftTopBottomText}>
-          {item.quantity + ' Qty.  •  Avg. ' + item.buyPrice}
+          {item.quantity +
+            ' Qty.  •  Avg. ' +
+            getPrice(item.buyPrice, usdInr, currency, 2)}
         </Text>
         <Text style={styles.leftMiddleText}>
           {item.name + ' (' + item.id + ')'}
         </Text>
         <Text style={styles.leftTopBottomText}>
-          {'Invested ' + (item.quantity * item.buyPrice).toFixed(2)}
+          {'Invested ' +
+            getPrice(item.quantity * item.buyPrice, usdInr, currency, 2)}
         </Text>
       </View>
       <View style={styles.rightDetails}>
@@ -40,11 +45,13 @@ function Currency({item = {}, theme, ticker = {}}) {
             ...styles.rightMiddleText,
             color: profit >= 0 ? colors[theme].green : colors[theme].red,
           }}>
-          {(profit >= 0 ? '+' : '') + Number(profit).toFixed(2)}
+          {(profit >= 0 ? '+' : '') + getPrice(profit, usdInr, currency, 2)}
         </Text>
         <View style={styles.rightBottomContainer}>
           <Text style={styles.leftTopBottomText}>
-            {'LTP ' + Number(ticker[item.id]?.price).toFixed(2) + ' '}
+            {'LTP ' +
+              getPrice(ticker[item.id]?.price, usdInr, currency, 4) +
+              ' '}
           </Text>
           <Text
             style={{
@@ -74,12 +81,12 @@ const createStyles = theme =>
       alignItems: 'center',
     },
     leftDetails: {
-      flex: 1,
+      flex: 1.3,
       justifyContent: 'space-between',
       alignItems: 'flex-start',
     },
     rightDetails: {
-      flex: 1,
+      flex: 0.7,
       justifyContent: 'space-between',
       alignItems: 'flex-end',
     },

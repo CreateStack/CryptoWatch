@@ -16,11 +16,13 @@ import Separator from '../component/Separator';
 import colors from '../config/colors';
 import useStore from '../store/useStore';
 
-function Portfolio({navigation}) {
+function Portfolio({navigation, route}) {
   const {
     addCrypto,
     addSub,
+    connectWs,
     deleteCrypto,
+    disconnectWs,
     getState,
     removeSub,
     subscribeStore,
@@ -35,6 +37,11 @@ function Portfolio({navigation}) {
   const [viewHeight, setViewHeight] = React.useState(0);
   const [viewTop, setViewTop] = React.useState(0);
   const [ticker, setTicker] = React.useState({});
+  const [currency, setCurrency] = React.useState(getState().crypto.currency);
+  const [showMessage, setShowMessage] = React.useState(
+    getState().socket.showMessage,
+  );
+  const {usdInr} = route.params;
 
   React.useEffect(() => {
     setRefresh(true);
@@ -50,6 +57,8 @@ function Portfolio({navigation}) {
     setDarkMode(await getState().crypto.darkMode);
     setTicker(await getState().socket.data);
     setCurrent(await getState().socket.current);
+    setCurrency(await getState().crypto.currency);
+    setShowMessage(await getState().socket.showMessage);
   });
 
   const leftAction = item => (
@@ -61,7 +70,12 @@ function Portfolio({navigation}) {
         paddingHorizontal: 16,
       }}
       onPress={() =>
-        navigation.navigate('EditCurrency', {item: item, theme: theme})
+        navigation.navigate('EditCurrency', {
+          item: item,
+          theme: theme,
+          usdInr: usdInr,
+          currency: currency,
+        })
       }>
       <Text style={{fontSize: 18, color: colors[theme].white}}>Edit</Text>
     </TouchableOpacity>
@@ -81,6 +95,7 @@ function Portfolio({navigation}) {
         deleteCrypto(item);
         removeSub(item.id);
         setData([]);
+        setRefresh(false);
       }}>
       <Text style={{fontSize: 18, color: colors[theme].white}}>Delete</Text>
     </TouchableOpacity>
@@ -90,13 +105,33 @@ function Portfolio({navigation}) {
       <Swipeable
         renderLeftActions={() => leftAction(item)}
         renderRightActions={() => rightAction(item)}>
-        <Currency item={item} theme={theme} ticker={ticker} />
+        <Currency
+          item={item}
+          theme={theme}
+          ticker={ticker}
+          currency={currency}
+          usdInr={usdInr}
+        />
       </Swipeable>
     ) : null;
   };
 
+  const onRefresh = () => {
+    setRefresh(true);
+    disconnectWs();
+    setTimeout(() => {
+      connectWs();
+      setRefresh(false);
+    }, 4000);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
+      {showMessage && (
+        <View style={{backgroundColor: 'rgb(72,72,72)', padding: 8}}>
+          <Text style={{color: 'white'}}>{getState().socket.message}</Text>
+        </View>
+      )}
       <View
         style={styles.holdingsContainer}
         onLayout={event => {
@@ -139,6 +174,8 @@ function Portfolio({navigation}) {
           invested={invested}
           theme={theme}
           current={current}
+          currency={currency}
+          usdInr={usdInr}
         />
       </View>
       <FlatList
@@ -146,7 +183,7 @@ function Portfolio({navigation}) {
         data={data}
         ListEmptyComponent={() => null}
         keyExtractor={(item, index) => index.toString()}
-        onRefresh={() => setData(getState().crypto.cryptos)}
+        onRefresh={onRefresh}
         renderItem={renderItem}
         refreshing={refresh}
         style={styles.flatlist}
@@ -168,6 +205,8 @@ function Portfolio({navigation}) {
           }}
           theme={theme}
           ticker={ticker}
+          currency={currency}
+          usdInr={usdInr}
         />
       </View>
     </SafeAreaView>

@@ -13,6 +13,7 @@ export default (
       ],
       investment: Number(5).toFixed(2),
       darkMode: true,
+      currency: 'INR',
     },
   },
 ) =>

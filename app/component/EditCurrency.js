@@ -6,7 +6,7 @@ import FloatingInput from './FloatingInput';
 import useStore from '../store/useStore';
 
 function EditCurrency(props) {
-  const {item, theme} = props.route.params;
+  const {item, theme, usdInr, currency} = props.route.params;
   const {editCrypto, editSub} = useStore();
   const [isBuy, setIsBuy] = React.useState(true);
   const [price, setPrice] = React.useState();
@@ -84,11 +84,16 @@ function EditCurrency(props) {
           onPress={() => {
             editCrypto({
               id: item.id,
-              price: price,
+              price: currency === 'INR' ? price / usdInr : price,
               quantity: quantity,
               buy: isBuy,
             });
-            editSub(item.id, price, quantity, isBuy);
+            editSub(
+              item.id,
+              currency === 'INR' ? price / usdInr : price,
+              quantity,
+              isBuy,
+            );
             props.navigation.goBack();
           }}>
           <Text style={styles.addText}>Modify</Text>

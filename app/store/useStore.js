@@ -66,9 +66,14 @@ export default useStore = () => {
     store.dispatch(socketActions.onMessage());
   };
 
+  const changeCurrency = currency => {
+    store.dispatch(actions.changeCurrency({currency}));
+  };
+
   return {
     addCrypto,
     addSub,
+    changeCurrency,
     changeTheme,
     connectWs,
     deleteCrypto,

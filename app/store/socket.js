@@ -5,7 +5,7 @@ const socketSlice = createSlice({
   initialState: {
     subs: [],
     data: {},
-    current: Number(0).toFixed(2),
+    current: Number(0),
   },
   reducers: {
     connectWs: state => {
@@ -44,6 +44,7 @@ const socketSlice = createSlice({
     removeSub: (state, action) => {
       state.subs = state.subs.filter(sub => sub !== action.payload.removeSub);
       delete state.data[action.payload.removeSub];
+      if (state.subs.length === 0) state.current = 0;
     },
     refreshData: (state, action) => {
       let coin = action.payload.sub;
@@ -61,6 +62,10 @@ const socketSlice = createSlice({
     addDayClose: (state, action) => {
       state.data[action.payload.sub].close = action.payload.close;
     },
+    displayMessage: (state, action) => {
+      state.message = action.payload.message;
+      state.showMessage = action.payload.showMessage;
+    },
   },
 });
 
@@ -69,6 +74,7 @@ export const {
   addDayClose,
   connectWs,
   disconnectWs,
+  displayMessage,
   editSub,
   onMessage,
   refreshData,

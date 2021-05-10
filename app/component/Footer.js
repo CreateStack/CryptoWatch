@@ -9,22 +9,22 @@ import {
 import Icon from 'react-native-vector-icons/dist/AntDesign';
 
 import colors from '../config/colors';
+import getPrice from '../util/getPrice';
 import AddCurrency from './AddCurrency';
 
-function Footer({addNewCurrency = () => {}, theme, ticker}) {
+function Footer({addNewCurrency = () => {}, theme, ticker, usdInr, currency}) {
   let sumPrev = 0;
   let sumNow = 0;
   let profit = 0;
   let profitPer = 0;
   for (var sub in ticker) {
-    sumPrev = sumPrev + ticker[sub].close;
-    sumNow = sumNow + ticker[sub].price;
+    sumPrev = sumPrev + ticker[sub].close * ticker[sub].quantity;
+    sumNow = sumNow + ticker[sub].price * ticker[sub].quantity;
   }
   if (sumPrev != 0) {
     profit = sumNow - sumPrev;
     profitPer = (profit * 100) / sumPrev;
   }
-  console.log('Pro: ', profit, profitPer);
   const styles = createStyles(theme);
   const [addCurrencyVisible, setAddCurrencyVisible] = React.useState(false);
   return (
@@ -42,7 +42,9 @@ function Footer({addNewCurrency = () => {}, theme, ticker}) {
               ...styles.number,
               color: profit >= 0 ? colors[theme].green : colors[theme].red,
             }}>
-            {(profit >= 0 ? '+' : '') + Number(profit).toFixed(4) + ' '}
+            {(profit >= 0 ? '+' : '') +
+              getPrice(profit, usdInr, currency, 4) +
+              ' '}
           </Text>
           <Text
             style={{
@@ -61,6 +63,8 @@ function Footer({addNewCurrency = () => {}, theme, ticker}) {
         setVisible={setAddCurrencyVisible}
         visible={addCurrencyVisible}
         theme={theme}
+        usdInr={usdInr}
+        currency={currency}
       />
     </>
   );
