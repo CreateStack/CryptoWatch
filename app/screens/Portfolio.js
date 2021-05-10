@@ -17,15 +17,24 @@ import colors from '../config/colors';
 import useStore from '../store/useStore';
 
 function Portfolio({navigation}) {
-  const {addCrypto, deleteCrypto, getState, subscribeStore} = useStore();
+  const {
+    addCrypto,
+    addSub,
+    deleteCrypto,
+    getState,
+    removeSub,
+    subscribeStore,
+  } = useStore();
   const [darkMode, setDarkMode] = React.useState(getState().crypto.darkMode);
   const theme = darkMode ? 'dark' : 'light';
   const styles = createStyles(theme);
   const [data, setData] = React.useState([]);
-  const [invested, setInvested] = React.useState([]);
+  const [invested, setInvested] = React.useState('0.00');
+  const [current, setCurrent] = React.useState('0.00');
   const [refresh, setRefresh] = React.useState(false);
   const [viewHeight, setViewHeight] = React.useState(0);
   const [viewTop, setViewTop] = React.useState(0);
+  const [ticker, setTicker] = React.useState({});
 
   React.useEffect(() => {
     setRefresh(true);
@@ -39,6 +48,8 @@ function Portfolio({navigation}) {
     setData(await getState().crypto.cryptos);
     setInvested(await getState().crypto.investment);
     setDarkMode(await getState().crypto.darkMode);
+    setTicker(await getState().socket.data);
+    setCurrent(await getState().socket.current);
   });
 
   const leftAction = item => (
@@ -68,6 +79,7 @@ function Portfolio({navigation}) {
       onPress={() => {
         setRefresh(true);
         deleteCrypto(item);
+        removeSub(item.id);
         setData([]);
       }}>
       <Text style={{fontSize: 18, color: colors[theme].white}}>Delete</Text>
@@ -78,7 +90,7 @@ function Portfolio({navigation}) {
       <Swipeable
         renderLeftActions={() => leftAction(item)}
         renderRightActions={() => rightAction(item)}>
-        <Currency item={item} theme={theme} />
+        <Currency item={item} theme={theme} ticker={ticker} />
       </Swipeable>
     ) : null;
   };
@@ -123,7 +135,11 @@ function Portfolio({navigation}) {
           var {height} = event.nativeEvent.layout;
           setViewHeight(height);
         }}>
-        <InvestmentOverview invested={invested} theme={theme} />
+        <InvestmentOverview
+          invested={invested}
+          theme={theme}
+          current={current}
+        />
       </View>
       <FlatList
         //contentContainerStyle={styles.flatlistContainer}
@@ -141,15 +157,17 @@ function Portfolio({navigation}) {
       />
       <View style={styles.footerCont}>
         <Footer
-          addNewCurrency={(name, buyPrice, quantity, value) =>
+          addNewCurrency={(name, buyPrice, quantity, value) => {
             addCrypto({
               id: value,
               name: name,
               buyPrice: buyPrice,
               quantity: quantity,
-            })
-          }
+            });
+            addSub(value, quantity);
+          }}
           theme={theme}
+          ticker={ticker}
         />
       </View>
     </SafeAreaView>
@@ -200,8 +218,8 @@ const createStyles = theme =>
       backgroundColor: colors[theme].blueDark,
       alignItems: 'center',
       justifyContent: 'center',
-      height: 20,
-      width: 20,
+      height: 23,
+      width: 23,
       borderRadius: 20,
     },
     investmentContainer: {

@@ -1,101 +1,48 @@
 import React from 'react';
+import {ActivityIndicator, View} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import StackNavigation from './app/navigation/StackNavigation';
 
 import configureStore from './app/store/configureStore';
 import StoreContext from './app/store/context';
-
-const SOCKET_URL = 'wss://ws-feed.pro.coinbase.com';
-const ws = new WebSocket(SOCKET_URL);
-
-const store = configureStore();
+import colors from './app/config/colors';
 
 function App() {
-  /* const [btcData, setBtcData] = React.useState(true);
-  const [ethData, setEthData] = React.useState(true);
-
+  const [storeLoading, setStoreLoading] = React.useState(true);
+  const [store, setStore] = React.useState();
   React.useEffect(() => {
-    const interval = setInterval(() => {
-      setBtcData(d => !d);
-      setEthData(d => !d);
-    }, 60000);
-
-    return clearInterval(interval);
+    setStoreLoading(true);
+    AsyncStorage.getItem('store')
+      .then(value => {
+        if (value && value.length) {
+          let initialStore = JSON.parse(value);
+          console.log('Initial store: ', initialStore);
+          setStore(configureStore(initialStore));
+        } else {
+          setStore(configureStore());
+        }
+        setStoreLoading(false);
+      })
+      .catch(error => {
+        setStore(configureStore());
+        console.log('Error in fetching store: ', error);
+        setStoreLoading(false);
+      });
   }, []);
-
   React.useEffect(() => {
-    ws.onopen = () => {
-      ws.send(
-        JSON.stringify({
-          type: 'subscribe',
-          product_ids: ['ETH-USD', 'BTC-USD'],
-          channels: [
-            {
-              name: 'ticker',
-              product_ids: ['ETH-USD', 'BTC-USD'],
-            },
-          ],
-        }),
+    if (store) {
+      let unsubscribe = store.subscribe(
+        async () =>
+          await AsyncStorage.setItem('store', JSON.stringify(store.getState())),
       );
-    };
+    }
+  }, [store]);
 
-    ws.onmessage = msg => {
-      if (!btcData && !ethData) return;
-      if (!msg) return;
-      priceData = JSON.parse(msg.data);
-      switch (priceData.product_id) {
-        case 'ETH-USD':
-          ethData && setPriceETH(priceData.price);
-          setEthData(false);
-          break;
-        case 'BTC-USD':
-          btcData && setPriceBTC(priceData.price);
-          setBtcData(false);
-          break;
-        default:
-          setBtcData(false);
-          setEthData(false);
-          break;
-      }
-    };
-    ws.onerror = e => {
-      console.log(e.message);
-    };
-    ws.onclose = e => {
-      console.log(e.code, e.reason);
-    };
-  }, []);
-  const [priceBTC, setPriceBTC] = React.useState(0);
-  const [priceETH, setPriceETH] = React.useState(0);
-
-  return (
-    <View style={{...styles.container}}>
-      <View style={styles.coin}>
-        <View style={styles.coinDesc}>
-          <Image
-            source={{
-              uri: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1.png',
-            }}
-            style={styles.icon}
-          />
-          <Text style={styles.coinText}>BTC</Text>
-        </View>
-        <Text>$ {priceBTC}</Text>
-      </View>
-      <View style={styles.coin}>
-        <View style={styles.coinDesc}>
-          <Image
-            source={{
-              uri:
-                'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-            }}
-            style={styles.icon}
-          />
-          <Text style={styles.coinText}>ETH</Text>
-        </View>
-        <Text>$ {priceETH}</Text>
-      </View>
-    </View> */
-  return (
+  return storeLoading ? (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size="large" color={colors.dark.blue} />
+    </View>
+  ) : (
     <StoreContext.Provider value={{store}}>
       <StackNavigation />
     </StoreContext.Provider>

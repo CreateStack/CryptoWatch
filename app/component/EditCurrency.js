@@ -7,7 +7,7 @@ import useStore from '../store/useStore';
 
 function EditCurrency(props) {
   const {item, theme} = props.route.params;
-  const {editCrypto} = useStore();
+  const {editCrypto, editSub} = useStore();
   const [isBuy, setIsBuy] = React.useState(true);
   const [price, setPrice] = React.useState();
   const [quantity, setQuanity] = React.useState();
@@ -88,6 +88,7 @@ function EditCurrency(props) {
               quantity: quantity,
               buy: isBuy,
             });
+            editSub(item.id, price, quantity, isBuy);
             props.navigation.goBack();
           }}>
           <Text style={styles.addText}>Modify</Text>

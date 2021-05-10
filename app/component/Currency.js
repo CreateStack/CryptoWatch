@@ -2,8 +2,18 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import colors from '../config/colors';
 
-function Currency({item = {}, theme}) {
+function Currency({item = {}, theme, ticker = {}}) {
   const styles = createStyles(theme);
+  let percent = 0;
+  let profit = 0;
+  let dailyPer = 0;
+  if (item.quantity * item.buyPrice && ticker[item.id]) {
+    profit = ticker[item.id]?.value - item.quantity * item.buyPrice;
+    percent = (profit * 100) / (item.quantity * item.buyPrice);
+    dailyPer =
+      ((ticker[item.id]?.price - ticker[item.id].close) * 100) /
+      ticker[item.id].close;
+  }
   return (
     <View style={styles.container}>
       <View style={styles.leftDetails}>
@@ -18,11 +28,34 @@ function Currency({item = {}, theme}) {
         </Text>
       </View>
       <View style={styles.rightDetails}>
-        <Text style={styles.rightTopBottomText}>-1.14%</Text>
-        <Text style={styles.rightMiddleText}>148.00</Text>
+        <Text
+          style={{
+            ...styles.rightTopBottomText,
+            color: percent >= 0 ? colors[theme].green : colors[theme].red,
+          }}>
+          {(percent >= 0 ? '+' : '') + Number(percent).toFixed(2) + '%'}
+        </Text>
+        <Text
+          style={{
+            ...styles.rightMiddleText,
+            color: profit >= 0 ? colors[theme].green : colors[theme].red,
+          }}>
+          {(profit >= 0 ? '+' : '') + Number(profit).toFixed(2)}
+        </Text>
         <View style={styles.rightBottomContainer}>
-          <Text style={styles.leftTopBottomText}>LTP 3207.00 </Text>
-          <Text style={styles.rightTopBottomText}>(-0.97%)</Text>
+          <Text style={styles.leftTopBottomText}>
+            {'LTP ' + Number(ticker[item.id]?.price).toFixed(2) + ' '}
+          </Text>
+          <Text
+            style={{
+              ...styles.rightTopBottomText,
+              color: dailyPer >= 0 ? colors[theme].green : colors[theme].red,
+            }}>
+            {'(' +
+              (dailyPer >= 0 ? '+' : '') +
+              Number(dailyPer).toFixed(2) +
+              '%)'}
+          </Text>
         </View>
       </View>
     </View>
@@ -41,10 +74,12 @@ const createStyles = theme =>
       alignItems: 'center',
     },
     leftDetails: {
+      flex: 1,
       justifyContent: 'space-between',
       alignItems: 'flex-start',
     },
     rightDetails: {
+      flex: 1,
       justifyContent: 'space-between',
       alignItems: 'flex-end',
     },

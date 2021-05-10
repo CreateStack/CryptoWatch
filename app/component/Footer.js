@@ -11,7 +11,20 @@ import Icon from 'react-native-vector-icons/dist/AntDesign';
 import colors from '../config/colors';
 import AddCurrency from './AddCurrency';
 
-function Footer({addNewCurrency = () => {}, theme}) {
+function Footer({addNewCurrency = () => {}, theme, ticker}) {
+  let sumPrev = 0;
+  let sumNow = 0;
+  let profit = 0;
+  let profitPer = 0;
+  for (var sub in ticker) {
+    sumPrev = sumPrev + ticker[sub].close;
+    sumNow = sumNow + ticker[sub].price;
+  }
+  if (sumPrev != 0) {
+    profit = sumNow - sumPrev;
+    profitPer = (profit * 100) / sumPrev;
+  }
+  console.log('Pro: ', profit, profitPer);
   const styles = createStyles(theme);
   const [addCurrencyVisible, setAddCurrencyVisible] = React.useState(false);
   return (
@@ -21,11 +34,26 @@ function Footer({addNewCurrency = () => {}, theme}) {
         <TouchableOpacity
           style={styles.addContainer}
           onPress={() => setAddCurrencyVisible(visible => !visible)}>
-          <Icon name="pluscircleo" size={40} color={colors[theme].blue} />
+          <Icon name="pluscircleo" size={30} color={colors[theme].blue} />
         </TouchableOpacity>
         <View style={styles.figures}>
-          <Text style={styles.number}>-1,209.79 </Text>
-          <Text style={styles.percent}> -0.69%</Text>
+          <Text
+            style={{
+              ...styles.number,
+              color: profit >= 0 ? colors[theme].green : colors[theme].red,
+            }}>
+            {(profit >= 0 ? '+' : '') + Number(profit).toFixed(4) + ' '}
+          </Text>
+          <Text
+            style={{
+              ...styles.percent,
+              color: profitPer >= 0 ? colors[theme].green : colors[theme].red,
+            }}>
+            {' ' +
+              (profitPer >= 0 ? '+' : '') +
+              Number(profitPer).toFixed(2) +
+              '%'}
+          </Text>
         </View>
       </View>
       <AddCurrency
@@ -44,7 +72,7 @@ const createStyles = theme =>
       backgroundColor: colors[theme].secondary,
       position: 'absolute',
       left: Dimensions.get('window').width / 2 - 20,
-      top: -18,
+      top: -22,
       borderWidth: 8,
       borderRadius: 100,
       borderColor: colors[theme].secondary,
@@ -53,7 +81,7 @@ const createStyles = theme =>
     container: {
       backgroundColor: colors[theme].secondary,
       paddingHorizontal: 16,
-      paddingVertical: 10,
+      paddingVertical: 5,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',

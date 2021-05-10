@@ -52,8 +52,8 @@ function AddCurrency({onAddPress = () => {}, setVisible, theme, visible}) {
             setOpen={setOpen}
             placeholder="Select a crypto"
             schema={{
-              label: 'name',
-              value: 'asset_id',
+              label: 'currency',
+              value: 'base',
             }}
             //renderListItem={renderItem}
           />
@@ -88,8 +88,8 @@ function AddCurrency({onAddPress = () => {}, setVisible, theme, visible}) {
             onPress={() => {
               let name = value;
               for (let i = 0; i < constants.length; i++) {
-                if (constants[i].asset_id === value) {
-                  name = constants[i].name;
+                if (constants[i].base === value) {
+                  name = constants[i].currency;
                   break;
                 }
               }

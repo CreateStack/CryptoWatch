@@ -4,18 +4,21 @@ import {StyleSheet, Text, View} from 'react-native';
 import colors from '../config/colors';
 import Separator from './Separator';
 
-function InvestmentOverview({invested, current, pl, plPercent, theme}) {
+function InvestmentOverview({invested = 0, current = 0, pl, plPercent, theme}) {
   const styles = createStyles(theme);
+  const pnl = current - invested;
+  let profitPer = 0;
+  if (invested > 0) profitPer = (pnl * 100) / invested;
   return (
     <View style={styles.container}>
       <View style={styles.overview}>
         <View style={styles.invested}>
           <Text style={styles.upperText}>Invested</Text>
-          <Text style={styles.lowerText}>{invested}</Text>
+          <Text style={styles.lowerText}>{Number(invested).toFixed(2)}</Text>
         </View>
         <View style={styles.current}>
           <Text style={styles.upperText}>Current</Text>
-          <Text style={styles.lowerText}>1,73,711.17</Text>
+          <Text style={styles.lowerText}>{Number(current).toFixed(2)}</Text>
         </View>
       </View>
       <Separator style={styles.separator} dashColor={colors[theme].grey} />
@@ -24,8 +27,20 @@ function InvestmentOverview({invested, current, pl, plPercent, theme}) {
           <Text style={styles.PLText}>P&L</Text>
         </View>
         <View style={styles.percent}>
-          <Text style={styles.PL}>+14,103.50 </Text>
-          <Text style={styles.PLPercent}> +8.84 %</Text>
+          <Text
+            style={{
+              ...styles.PL,
+              color: pnl >= 0 ? colors[theme].green : colors[theme].red,
+            }}>
+            {(pnl >= 0 ? '+' : '') + Number(pnl).toFixed(2)}{' '}
+          </Text>
+          <Text
+            style={{
+              ...styles.PLPercent,
+              color: profitPer >= 0 ? colors[theme].green : colors[theme].red,
+            }}>
+            {(profitPer >= 0 ? '+' : '') + Number(profitPer).toFixed(2) + ' %'}
+          </Text>
         </View>
       </View>
     </View>

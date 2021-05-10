@@ -1,5 +1,5 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useRef, useState, useEffect} from 'react';
+import {AppState, StyleSheet, View} from 'react-native';
 import 'react-native-gesture-handler';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
@@ -14,15 +14,41 @@ import useStore from '../store/useStore';
 const Stack = createStackNavigator();
 
 function StackNavigation(props) {
-  const {getState, subscribeStore} = useStore();
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  useEffect(() => {
+    AppState.addEventListener('change', _handleAppStateChange);
+
+    return () => {
+      AppState.removeEventListener('change', _handleAppStateChange);
+    };
+  }, []);
+
+  const _handleAppStateChange = nextAppState => {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      console.log('App has come to the foreground!');
+    }
+
+    appState.current = nextAppState;
+    setAppStateVisible(appState.current);
+    console.log('AppState', appState.current);
+  };
+
+  const {connectWs, disconnectWs, getState, subscribeStore} = useStore();
   const [darkMode, setDarkMode] = React.useState(getState().crypto.darkMode);
   const theme = darkMode ? 'dark' : 'light';
   let unSubscribe = subscribeStore(async () => {
     setDarkMode(await getState().crypto.darkMode);
   });
   React.useEffect(() => {
+    if (appStateVisible === 'active') connectWs();
+    else disconnectWs();
     return () => unSubscribe();
-  }, []);
+  }, [appStateVisible]);
   return (
     <NavigationContainer independent={true}>
       <Stack.Navigator

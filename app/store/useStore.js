@@ -2,6 +2,7 @@ import {useContext} from 'react';
 
 import StoreContext from './context';
 import * as actions from './cryptos';
+import * as socketActions from './socket';
 
 export default useStore = () => {
   const {store} = useContext(StoreContext);
@@ -41,12 +42,43 @@ export default useStore = () => {
     }
   };
 
+  const addSub = (newSub, quantity) => {
+    store.dispatch(socketActions.addSub({newSub, quantity}));
+  };
+  const editSub = (sub, price, quantity, isBuy) => {
+    store.dispatch(socketActions.editSub({sub, price, quantity, isBuy}));
+  };
+  const refreshData = (sub, price) => {
+    store.dispatch(socketActions.refreshData({sub, price}));
+  };
+  const removeSub = removeSub => {
+    store.dispatch(socketActions.removeSub({removeSub}));
+  };
+  const connectWs = () => {
+    store.dispatch(socketActions.connectWs());
+  };
+
+  const disconnectWs = () => {
+    store.dispatch(socketActions.disconnectWs());
+  };
+
+  const onMessage = () => {
+    store.dispatch(socketActions.onMessage());
+  };
+
   return {
     addCrypto,
+    addSub,
     changeTheme,
+    connectWs,
     deleteCrypto,
+    disconnectWs,
     editCrypto,
+    editSub,
     getState,
+    onMessage,
+    refreshData,
+    removeSub,
     subscribeStore,
   };
 };

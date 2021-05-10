@@ -3,14 +3,7 @@ import {Alert} from 'react-native';
 
 const cryptoSlice = createSlice({
   name: 'crypto',
-  initialState: {
-    cryptos: [
-      {id: 'BTC', name: 'Bitcoin', buyPrice: 1, quantity: 1},
-      {id: 'ETH', name: 'Ethereum', buyPrice: 2, quantity: 2},
-    ],
-    investment: Number(5).toFixed(2),
-    darkMode: true,
-  },
+  initialState: {},
   reducers: {
     addCrypto: (state, action) => {
       let item = state.cryptos.filter(
