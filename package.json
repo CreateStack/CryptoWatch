@@ -20,6 +20,7 @@
     "better-fetch": "^1.1.2",
     "react": "17.0.1",
     "react-native": "0.64.0",
+    "react-native-awesome-alerts": "^1.4.2",
     "react-native-dash": "^0.0.11",
     "react-native-dropdown-picker": "^5.0.0",
     "react-native-gesture-handler": "^1.10.3",

@@ -7,9 +7,9 @@ import {ms} from '../util/scale';
 import useStore from '../store/useStore';
 
 function EditCurrency(props) {
-  const {item, theme, usdInr, currency} = props.route.params;
+  const {item, theme, usdInr, currency, setBuy} = props.route.params;
   const {editCrypto, editSub} = useStore();
-  const [isBuy, setIsBuy] = React.useState(true);
+  const [isBuy, setIsBuy] = React.useState(setBuy);
   const [price, setPrice] = React.useState();
   const [quantity, setQuanity] = React.useState();
   const [isModifyDisabled, setIsModifyDisabled] = React.useState(true);

@@ -1,10 +1,27 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import AwesomeAlert from 'react-native-awesome-alerts';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Vibration,
+} from 'react-native';
 
 import colors from '../config/colors';
 import getPrice from '../util/getPrice';
 import {ms} from '../util/scale';
-function Currency({item = {}, theme, ticker = {}, usdInr, currency}) {
+function Currency({
+  item = {},
+  theme,
+  ticker = {},
+  usdInr,
+  currency,
+  setRefresh = () => {},
+  setData = () => {},
+  deleteCrypto = () => {},
+  removeSub = () => {},
+}) {
   const styles = createStyles(theme);
   let percent = 0;
   let profit = 0;
@@ -16,61 +33,105 @@ function Currency({item = {}, theme, ticker = {}, usdInr, currency}) {
       ((ticker[item.id]?.price - ticker[item.id].close) * 100) /
       ticker[item.id].close;
   }
+  const [showAlert, setShowAlert] = React.useState(false);
   return (
-    <View style={styles.container}>
-      <View style={styles.leftDetails}>
-        <Text style={styles.leftTopBottomText}>
-          {item.quantity +
-            ' Qty.  •  Avg. ' +
-            getPrice(item.buyPrice, usdInr, currency, 2)}
-        </Text>
-        <Text style={styles.leftMiddleText}>
-          {item.name + ' (' + item.id + ')'}
-        </Text>
-        <Text style={styles.leftTopBottomText}>
-          {'Invested ' +
-            getPrice(item.quantity * item.buyPrice, usdInr, currency, 2)}
-        </Text>
-      </View>
-      <View style={styles.rightDetails}>
-        <Text
-          style={{
-            ...styles.rightTopBottomText,
-            color: percent >= 0 ? colors[theme].green : colors[theme].red,
-          }}>
-          {(percent >= 0 ? '+' : '') + Number(percent).toFixed(2) + '%'}
-        </Text>
-        <Text
-          style={{
-            ...styles.rightMiddleText,
-            color: profit >= 0 ? colors[theme].green : colors[theme].red,
-          }}>
-          {(profit >= 0 ? '+' : '') + getPrice(profit, usdInr, currency, 2)}
-        </Text>
-        <View style={styles.rightBottomContainer}>
+    <>
+      {showAlert && (
+        <AwesomeAlert
+          show={showAlert}
+          showProgress={false}
+          title="Delete"
+          message="Are you sure to delete this?"
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showCancelButton={true}
+          showConfirmButton={true}
+          cancelText="No, cancel"
+          confirmText="Yes, delete it"
+          confirmButtonColor="#DD6B55"
+          onCancelPressed={() => {
+            setShowAlert(false);
+          }}
+          onConfirmPressed={() => {
+            setRefresh(true);
+            deleteCrypto();
+            removeSub();
+            setData([]);
+            setRefresh(false);
+            setShowAlert(false);
+          }}
+          onDismiss={() => setShowAlert(false)}
+          contentContainerStyle={styles.alert}
+          titleStyle={{color: colors[theme].white}}
+          messageStyle={{color: colors[theme].white}}
+          confirmButtonColor={colors[theme].red}
+          cancelButtonColor={colors[theme].blue}
+        />
+      )}
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={1}
+        onLongPress={() => {
+          Vibration.vibrate([0, 20]);
+          setShowAlert(true);
+        }}>
+        <View style={styles.leftDetails}>
           <Text style={styles.leftTopBottomText}>
-            {'LTP ' +
-              getPrice(ticker[item.id]?.price, usdInr, currency, 4) +
-              ' '}
+            {item.quantity +
+              ' Qty.  •  Avg. ' +
+              getPrice(item.buyPrice, usdInr, currency, 2)}
           </Text>
+          <Text style={styles.leftMiddleText}>
+            {item.name + ' (' + item.id + ')'}
+          </Text>
+          <Text style={styles.leftTopBottomText}>
+            {'Invested ' +
+              getPrice(item.quantity * item.buyPrice, usdInr, currency, 2)}
+          </Text>
+        </View>
+        <View style={styles.rightDetails}>
           <Text
             style={{
               ...styles.rightTopBottomText,
-              color: dailyPer >= 0 ? colors[theme].green : colors[theme].red,
+              color: percent >= 0 ? colors[theme].green : colors[theme].red,
             }}>
-            {'(' +
-              (dailyPer >= 0 ? '+' : '') +
-              Number(dailyPer).toFixed(2) +
-              '%)'}
+            {(percent >= 0 ? '+' : '') + Number(percent).toFixed(2) + '%'}
           </Text>
+          <Text
+            style={{
+              ...styles.rightMiddleText,
+              color: profit >= 0 ? colors[theme].green : colors[theme].red,
+            }}>
+            {(profit >= 0 ? '+' : '') + getPrice(profit, usdInr, currency, 2)}
+          </Text>
+          <View style={styles.rightBottomContainer}>
+            <Text style={styles.leftTopBottomText}>
+              {'LTP ' +
+                getPrice(ticker[item.id]?.price, usdInr, currency, 4) +
+                ' '}
+            </Text>
+            <Text
+              style={{
+                ...styles.rightTopBottomText,
+                color: dailyPer >= 0 ? colors[theme].green : colors[theme].red,
+              }}>
+              {'(' +
+                (dailyPer >= 0 ? '+' : '') +
+                Number(dailyPer).toFixed(2) +
+                '%)'}
+            </Text>
+          </View>
         </View>
-      </View>
-    </View>
+      </TouchableOpacity>
+    </>
   );
 }
 
 const createStyles = theme =>
   StyleSheet.create({
+    alert: {
+      backgroundColor: colors[theme].primary,
+    },
     container: {
       paddingVertical: 8,
       paddingHorizontal: 16,

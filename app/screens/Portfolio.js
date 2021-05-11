@@ -50,7 +50,7 @@ function Portfolio({navigation, route}) {
     setInvested(getState().crypto.investment);
     setRefresh(false);
     return () => unSubscribe();
-  });
+  }, []);
 
   let unSubscribe = subscribeStore(async () => {
     setData(await getState().crypto.cryptos);
@@ -76,9 +76,10 @@ function Portfolio({navigation, route}) {
           theme: theme,
           usdInr: usdInr,
           currency: currency,
+          setBuy: true,
         })
       }>
-      <Text style={{fontSize: 18, color: colors[theme].white}}>Edit</Text>
+      <Text style={{fontSize: 18, color: colors[theme].white}}>Buy</Text>
     </TouchableOpacity>
   );
 
@@ -92,28 +93,36 @@ function Portfolio({navigation, route}) {
         paddingHorizontal: 16,
       }}
       onPress={() => {
-        setRefresh(true);
-        deleteCrypto(item);
-        removeSub(item.id);
-        setData([]);
-        setRefresh(false);
+        navigation.navigate('EditCurrency', {
+          item: item,
+          theme: theme,
+          usdInr: usdInr,
+          currency: currency,
+          setBuy: false,
+        });
       }}>
-      <Text style={{fontSize: ms(18), color: colors[theme].white}}>Delete</Text>
+      <Text style={{fontSize: ms(18), color: colors[theme].white}}>Sell</Text>
     </TouchableOpacity>
   );
   const renderItem = ({item, index}) => {
     return item ? (
-      <Swipeable
-        renderLeftActions={() => leftAction(item)}
-        renderRightActions={() => rightAction(item)}>
-        <Currency
-          item={item}
-          theme={theme}
-          ticker={ticker}
-          currency={currency}
-          usdInr={usdInr}
-        />
-      </Swipeable>
+      <>
+        <Swipeable
+          renderLeftActions={() => leftAction(item)}
+          renderRightActions={() => rightAction(item)}>
+          <Currency
+            item={item}
+            theme={theme}
+            ticker={ticker}
+            currency={currency}
+            usdInr={usdInr}
+            setRefresh={setRefresh}
+            setData={setData}
+            deleteCrypto={() => deleteCrypto(item)}
+            removeSub={() => removeSub(item.id)}
+          />
+        </Swipeable>
+      </>
     ) : null;
   };
 
@@ -122,8 +131,10 @@ function Portfolio({navigation, route}) {
     disconnectWs();
     setTimeout(() => {
       connectWs();
+    }, 2000);
+    setTimeout(() => {
       setRefresh(false);
-    }, 4000);
+    }, 5000);
   };
 
   return (
@@ -180,8 +191,6 @@ function Portfolio({navigation, route}) {
         />
       </View>
       <FlatList
-        //contentContainerStyle={styles.flatlistContainer}
-
         data={data}
         ListEmptyComponent={() => null}
         keyExtractor={(item, index) => index.toString()}

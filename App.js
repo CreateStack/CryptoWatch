@@ -17,7 +17,7 @@ function App() {
       .then(value => {
         if (value && value.length) {
           let initialStore = JSON.parse(value);
-          console.log('Initial store: ', initialStore);
+          console.log('Initial store: ', value);
           setStore(configureStore(initialStore));
         } else {
           setStore(configureStore());
@@ -31,7 +31,8 @@ function App() {
       .then(value => {
         if (value && value.length) {
           let usd_inr = JSON.parse(value);
-          if (Date.now() - usd_inr.timestamp > 2.16e7) {
+          console.log('Expire USDT_INR: ', Date.now() - usd_inr.timestamp);
+          if (Date.now() - usd_inr.timestamp > 600000) {
             fetch('https://api.coindcx.com/exchange/ticker')
               .then(response => response.json())
               .then(data => {
@@ -81,9 +82,28 @@ function App() {
           });
       })
       .catch(error => {
-        setUsdInr('');
         console.log('Error in fetching store: ', error);
-        setStoreLoading(false);
+        fetch('https://api.coindcx.com/exchange/ticker')
+          .then(response => response.json())
+          .then(data => {
+            let req = {};
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].market === 'USDTINR') {
+                req = data[i];
+                break;
+              }
+            }
+            let reqData = {USD_INR: req.last_price, timestamp: Date.now()};
+            console.log('USD_INR: ', reqData);
+            AsyncStorage.setItem('usd_inr', JSON.stringify(reqData));
+            setUsdInr(reqData.USD_INR);
+            setStoreLoading(false);
+          })
+          .catch(error => {
+            console.log('Error fetching USD_INR: ', error);
+            setUsdInr('');
+            setStoreLoading(false);
+          });
       });
   }, []);
   React.useEffect(() => {
