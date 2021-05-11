@@ -4,6 +4,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import colors from '../config/colors';
 import getPrice from '../util/getPrice';
 import Separator from './Separator';
+import {ms} from '../util/scale';
 
 function InvestmentOverview({
   invested = 0,
@@ -80,12 +81,12 @@ const createStyles = theme =>
     },
     upperText: {
       color: colors[theme].grey,
-      fontSize: 12,
+      fontSize: ms(12),
       paddingBottom: 2,
     },
     lowerText: {
       color: colors[theme].white,
-      fontSize: 18,
+      fontSize: ms(18),
       paddingTop: 2,
     },
     separator: {
@@ -102,15 +103,15 @@ const createStyles = theme =>
     },
     PLText: {
       color: colors[theme].grey,
-      fontSize: 18,
+      fontSize: ms(18),
     },
     PL: {
       color: colors[theme].green,
-      fontSize: 18,
+      fontSize: ms(18),
     },
     PLPercent: {
       color: colors[theme].green,
-      fontSize: 12,
+      fontSize: ms(12),
     },
   });
 

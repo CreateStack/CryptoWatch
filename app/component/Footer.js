@@ -8,9 +8,10 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/AntDesign';
 
+import AddCurrency from './AddCurrency';
 import colors from '../config/colors';
 import getPrice from '../util/getPrice';
-import AddCurrency from './AddCurrency';
+import {ms, s, vs} from '../util/scale';
 
 function Footer({addNewCurrency = () => {}, theme, ticker, usdInr, currency}) {
   let sumPrev = 0;
@@ -32,9 +33,10 @@ function Footer({addNewCurrency = () => {}, theme, ticker, usdInr, currency}) {
       <View style={styles.container}>
         <Text style={styles.desc}>Today's P&L</Text>
         <TouchableOpacity
+          pointerEvents="box-none"
           style={styles.addContainer}
           onPress={() => setAddCurrencyVisible(visible => !visible)}>
-          <Icon name="pluscircleo" size={30} color={colors[theme].blue} />
+          <Icon name="pluscircleo" size={s(25)} color={colors[theme].blue} />
         </TouchableOpacity>
         <View style={styles.figures}>
           <Text
@@ -75,12 +77,13 @@ const createStyles = theme =>
     addContainer: {
       backgroundColor: colors[theme].secondary,
       position: 'absolute',
-      left: Dimensions.get('window').width / 2 - 20,
-      top: -22,
-      borderWidth: 8,
+      left: Dimensions.get('window').width / 2 - s(20.5),
+      top: vs(-19),
+      borderWidth: s(8),
       borderRadius: 100,
       borderColor: colors[theme].secondary,
-      elevation: 3,
+      elevation: 11,
+      zIndex: 20,
     },
     container: {
       backgroundColor: colors[theme].secondary,
@@ -99,15 +102,15 @@ const createStyles = theme =>
     },
     desc: {
       color: colors[theme].white,
-      fontSize: 16,
+      fontSize: ms(16),
     },
     number: {
       color: colors[theme].red,
-      fontSize: 16,
+      fontSize: ms(16),
     },
     percent: {
       color: colors[theme].red,
-      fontSize: 14,
+      fontSize: ms(14),
     },
   });
 

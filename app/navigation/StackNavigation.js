@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
-import {AppState, StyleSheet, View} from 'react-native';
+import {AppState} from 'react-native';
 import 'react-native-gesture-handler';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 import colors from '../config/colors';
 import Portfolio from '../screens/Portfolio';
+import {ms, s, vs} from '../util/scale';
 import Settings from '../screens/Settings';
 import EditCurrency from '../component/EditCurrency';
 import useStore from '../store/useStore';
@@ -57,14 +58,14 @@ function StackNavigation(props) {
       <Stack.Navigator
         screenOptions={{
           headerStyle: {
-            height: 56,
+            height: vs(56),
             backgroundColor: colors[theme].tertiary,
             elevation: 0,
             shadowOpacity: 0,
           },
           headerTitleStyle: {
             color: colors[theme].white,
-            fontSize: 22,
+            fontSize: ms(22),
           },
           headerTintColor: colors[theme].white,
         }}
@@ -76,7 +77,7 @@ function StackNavigation(props) {
           options={({navigation}) => ({
             headerRight: () => (
               <Icon
-                size={24}
+                size={s(24)}
                 color={colors[theme].white}
                 name="gear"
                 onPress={() => navigation.navigate('Settings')}
@@ -94,8 +95,8 @@ function StackNavigation(props) {
             title: 'Settings',
             headerTitleStyle: {
               color: colors[theme].white,
-              fontSize: 22,
-              marginLeft: -20,
+              fontSize: ms(22),
+              marginLeft: s(-20),
             },
             headerStyle: {
               backgroundColor: colors[theme].primary,
@@ -111,8 +112,8 @@ function StackNavigation(props) {
             title: 'Edit currency',
             headerTitleStyle: {
               color: colors[theme].white,
-              fontSize: 22,
-              marginLeft: -20,
+              fontSize: ms(22),
+              marginLeft: s(-20),
               elevation: 0,
               shadowOpacity: 0,
             },
@@ -130,8 +131,8 @@ function StackNavigation(props) {
             title: 'API Key',
             headerTitleStyle: {
               color: colors[theme].white,
-              fontSize: 22,
-              marginLeft: -20,
+              fontSize: ms(22),
+              marginLeft: s(-20),
               elevation: 0,
               shadowOpacity: 0,
             },
@@ -146,7 +147,5 @@ function StackNavigation(props) {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export default StackNavigation;

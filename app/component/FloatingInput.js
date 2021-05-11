@@ -1,7 +1,8 @@
 import React from 'react';
 import {View, Text, TextInput} from 'react-native';
-import colors from '../config/colors';
 
+import colors from '../config/colors';
+import {ms, vs} from '../util/scale';
 export default class FloatingLabelInput extends React.Component {
   state = {
     isFocused: false,
@@ -16,8 +17,8 @@ export default class FloatingLabelInput extends React.Component {
     const labelStyle = {
       position: 'absolute',
       left: 0,
-      top: !isFocused ? 10 : 0,
-      fontSize: !isFocused ? 16 : 12,
+      top: vs(!isFocused ? 10 : 0),
+      fontSize: ms(!isFocused ? 16 : 12),
       color: !isFocused
         ? colors[theme].white
         : this.props.buy
@@ -30,7 +31,7 @@ export default class FloatingLabelInput extends React.Component {
         <TextInput
           {...props}
           style={{
-            fontSize: 18,
+            fontSize: ms(18),
             color: colors[theme].white,
             borderBottomWidth: 1,
             borderBottomColor: '#555',

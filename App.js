@@ -7,13 +7,6 @@ import configureStore from './app/store/configureStore';
 import StoreContext from './app/store/context';
 import colors from './app/config/colors';
 
-const getUSDINR = () => {
-  let rate = null;
-
-  console.log('Rate: ', rate);
-  return rate;
-};
-
 function App() {
   const [storeLoading, setStoreLoading] = React.useState(true);
   const [store, setStore] = React.useState();
@@ -38,16 +31,21 @@ function App() {
       .then(value => {
         if (value && value.length) {
           let usd_inr = JSON.parse(value);
-          if (Date.now() - usd_inr.timestamp > 8.64e7) {
-            fetch(
-              'https://free.currconv.com/api/v7/convert?q=USD_INR&compact=ultra&apiKey=29183e987f667a527de3',
-            )
+          if (Date.now() - usd_inr.timestamp > 2.16e7) {
+            fetch('https://api.coindcx.com/exchange/ticker')
               .then(response => response.json())
               .then(data => {
-                console.log('Data: ', data);
-                data.timestamp = Date.now();
-                AsyncStorage.setItem('usd_inr', JSON.stringify(data));
-                setUsdInr(data.USD_INR);
+                let req = {};
+                for (let i = 0; i < data.length; i++) {
+                  if (data[i].market === 'USDTINR') {
+                    req = data[i];
+                    break;
+                  }
+                }
+                let reqData = {USD_INR: req.last_price, timestamp: Date.now()};
+                console.log('USD_INR: ', reqData);
+                AsyncStorage.setItem('usd_inr', JSON.stringify(reqData));
+                setUsdInr(reqData.USD_INR);
                 setStoreLoading(false);
               })
               .catch(error => {
@@ -60,19 +58,24 @@ function App() {
             setStoreLoading(false);
           }
         }
-        fetch(
-          'https://free.currconv.com/api/v7/convert?q=USD_INR&compact=ultra&apiKey=29183e987f667a527de3',
-        )
+        fetch('https://api.coindcx.com/exchange/ticker')
           .then(response => response.json())
           .then(data => {
-            console.log('Data: ', data);
-            data.timestamp = Date.now();
-            AsyncStorage.setItem('usd_inr', JSON.stringify(data));
-            setUsdInr(data.USD_INR);
+            let req = {};
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].market === 'USDTINR') {
+                req = data[i];
+                break;
+              }
+            }
+            let reqData = {USD_INR: req.last_price, timestamp: Date.now()};
+            console.log('USD_INR: ', reqData);
+            AsyncStorage.setItem('usd_inr', JSON.stringify(reqData));
+            setUsdInr(reqData.USD_INR);
             setStoreLoading(false);
           })
           .catch(error => {
-            console.log('Erro fetching USD_INR: ', error);
+            console.log('Error fetching USD_INR: ', error);
             setUsdInr('');
             setStoreLoading(false);
           });

@@ -3,7 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 
 import colors from '../config/colors';
 import getPrice from '../util/getPrice';
-
+import {ms} from '../util/scale';
 function Currency({item = {}, theme, ticker = {}, usdInr, currency}) {
   const styles = createStyles(theme);
   let percent = 0;
@@ -92,21 +92,21 @@ const createStyles = theme =>
     },
     leftTopBottomText: {
       color: colors[theme].grey,
-      fontSize: 14,
+      fontSize: ms(14),
       paddingVertical: 8,
     },
     leftMiddleText: {
       color: colors[theme].white,
-      fontSize: 18,
+      fontSize: ms(18),
     },
     rightTopBottomText: {
       color: colors[theme].red,
-      fontSize: 14,
+      fontSize: ms(14),
       paddingVertical: 8,
     },
     rightMiddleText: {
       color: colors[theme].red,
-      fontSize: 18,
+      fontSize: ms(18),
     },
     rightBottomContainer: {
       flexDirection: 'row',

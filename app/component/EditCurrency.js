@@ -3,6 +3,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 import colors from '../config/colors';
 import FloatingInput from './FloatingInput';
+import {ms} from '../util/scale';
 import useStore from '../store/useStore';
 
 function EditCurrency(props) {
@@ -107,7 +108,7 @@ const createStyles = theme =>
   StyleSheet.create({
     addText: {
       color: colors[theme].white,
-      fontSize: 20,
+      fontSize: ms(20),
       fontWeight: 'bold',
     },
     buySellContainer: {
@@ -128,12 +129,12 @@ const createStyles = theme =>
     },
     buyText: {
       color: colors[theme].white,
-      fontSize: 18,
+      fontSize: ms(18),
       textAlign: 'center',
     },
     sellText: {
       color: colors[theme].white,
-      fontSize: 18,
+      fontSize: ms(18),
       textAlign: 'center',
     },
     sellContainer: {
@@ -149,7 +150,7 @@ const createStyles = theme =>
     },
     cancelText: {
       color: colors[theme].red,
-      fontSize: 20,
+      fontSize: ms(20),
       fontWeight: 'bold',
     },
     cancelButton: {
@@ -172,7 +173,7 @@ const createStyles = theme =>
       justifyContent: 'space-between',
     },
     cryptoText: {
-      fontSize: 20,
+      fontSize: ms(20),
       color: colors[theme].white,
     },
     cryptoTextContainer: {
@@ -187,7 +188,7 @@ const createStyles = theme =>
     },
     typeText: {
       color: colors[theme].white,
-      fontSize: 18,
+      fontSize: ms(18),
     },
     buttonsCont: {
       flexDirection: 'row',

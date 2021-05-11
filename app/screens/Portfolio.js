@@ -12,6 +12,7 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Currency from '../component/Currency';
 import Footer from '../component/Footer';
 import InvestmentOverview from '../component/InvestmentOverview';
+import {ms, s, vs} from '../util/scale';
 import Separator from '../component/Separator';
 import colors from '../config/colors';
 import useStore from '../store/useStore';
@@ -97,7 +98,7 @@ function Portfolio({navigation, route}) {
         setData([]);
         setRefresh(false);
       }}>
-      <Text style={{fontSize: 18, color: colors[theme].white}}>Delete</Text>
+      <Text style={{fontSize: ms(18), color: colors[theme].white}}>Delete</Text>
     </TouchableOpacity>
   );
   const renderItem = ({item, index}) => {
@@ -180,6 +181,7 @@ function Portfolio({navigation, route}) {
       </View>
       <FlatList
         //contentContainerStyle={styles.flatlistContainer}
+
         data={data}
         ListEmptyComponent={() => null}
         keyExtractor={(item, index) => index.toString()}
@@ -228,14 +230,14 @@ const createStyles = theme =>
     },
     portfolioText: {
       color: colors[theme].white,
-      fontSize: 25,
+      fontSize: ms(25),
       fontWeight: 'bold',
     },
     holdingsContainer: {
       width: '100%',
       alignItems: 'center',
       justifyContent: 'center',
-      paddingTop: 24,
+      paddingTop: vs(24),
       backgroundColor: colors[theme].tertiary,
     },
     holdings: {
@@ -245,11 +247,11 @@ const createStyles = theme =>
     },
     holdingsText: {
       color: colors[theme].blue,
-      fontSize: 16,
+      fontSize: ms(16),
     },
     holdingsNumberText: {
       color: colors[theme].white,
-      fontSize: 12,
+      fontSize: ms(12),
       fontWeight: 'bold',
       textAlign: 'center',
     },
@@ -257,8 +259,8 @@ const createStyles = theme =>
       backgroundColor: colors[theme].blueDark,
       alignItems: 'center',
       justifyContent: 'center',
-      height: 23,
-      width: 23,
+      height: s(23),
+      width: s(23),
       borderRadius: 20,
     },
     investmentContainer: {
@@ -266,8 +268,9 @@ const createStyles = theme =>
       marginBottom: 16,
     },
     footerCont: {
-      //position: 'absolute',
       bottom: 0,
+      zIndex: 1,
+      elevation: 10,
     },
     flatlist: {
       backgroundColor: colors[theme].primary,

@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, Switch, Text, TouchableOpacity, View} from 'react-native';
 
 import colors from '../config/colors';
+import {ms, s, vs} from '../util/scale';
 import Separator from '../component/Separator';
 import useStore from '../store/useStore';
 
@@ -108,7 +109,7 @@ const createStyles = theme =>
     currencyText: {
       color: colors[theme].white,
       fontWeight: 'bold',
-      fontSize: 14,
+      fontSize: ms(14),
     },
     darkModeContainer: {
       flexDirection: 'row',
@@ -119,7 +120,7 @@ const createStyles = theme =>
     },
     darkModeText: {
       color: colors[theme].white,
-      fontSize: 16,
+      fontSize: ms(16),
     },
   });
 

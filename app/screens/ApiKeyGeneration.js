@@ -11,6 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/dist/AntDesign';
 
 import colors from '../config/colors';
+import {ms, s, vs} from '../util/scale';
 import Separator from '../component/Separator';
 import useStore from '../store/useStore';
 
@@ -55,7 +56,7 @@ function ApiKeyGeneration(props) {
           </Text>
         )}
         <Icon
-          size={30}
+          size={s(30)}
           name={editKey ? 'checkcircleo' : 'edit'}
           onPress={() =>
             setEditKey(v => {
@@ -73,17 +74,19 @@ function ApiKeyGeneration(props) {
         dashStyle={{height: 0.5}}
         style={{width: '100%'}}
       />
-      <TouchableOpacity
-        style={styles.generateButton}
-        onPress={() =>
-          Linking.openURL(
-            'https://www.cryptocompare.com/coins/guides/how-to-use-our-api/',
-          )
-        }>
-        <Text style={{...styles.currentText, fontWeight: 'bold'}}>
-          Generate api key
-        </Text>
-      </TouchableOpacity>
+      {!editKey && (
+        <TouchableOpacity
+          style={styles.generateButton}
+          onPress={() =>
+            Linking.openURL(
+              'https://www.cryptocompare.com/coins/guides/how-to-use-our-api/',
+            )
+          }>
+          <Text style={{...styles.currentText, fontWeight: 'bold'}}>
+            Generate api key
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -106,7 +109,7 @@ const createStyles = theme =>
     },
     currentText: {
       color: colors[theme].white,
-      fontSize: 14,
+      fontSize: ms(14),
     },
     generateButton: {
       alignItems: 'center',
@@ -114,7 +117,7 @@ const createStyles = theme =>
       padding: 16,
       backgroundColor: colors[theme].blue,
       borderRadius: 6,
-      top: 16,
+      top: vs(16),
     },
   });
 

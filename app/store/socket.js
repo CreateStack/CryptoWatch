@@ -60,7 +60,8 @@ const socketSlice = createSlice({
       state.current = sum;
     },
     addDayClose: (state, action) => {
-      state.data[action.payload.sub].close = action.payload.close;
+      if (state.data[action.payload.sub])
+        state.data[action.payload.sub].close = action.payload.close;
     },
     displayMessage: (state, action) => {
       state.message = action.payload.message;

@@ -6,6 +6,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import FloatingInput from './FloatingInput';
 import colors from '../config/colors';
 import constants from '../config/constants';
+import {ms} from '../util/scale';
 
 function AddCurrency({
   onAddPress = () => {},
@@ -153,12 +154,12 @@ const createStyles = theme =>
     },
     addText: {
       color: colors[theme].white,
-      fontSize: 20,
+      fontSize: ms(20),
       fontWeight: 'bold',
     },
     cancelText: {
       color: colors[theme].red,
-      fontSize: 20,
+      fontSize: ms(20),
       fontWeight: 'bold',
     },
     cancelButton: {
@@ -194,7 +195,7 @@ const createStyles = theme =>
     },
     itemText: {
       color: colors[theme].white,
-      fontSize: 14,
+      fontSize: ms(14),
     },
   });
 
